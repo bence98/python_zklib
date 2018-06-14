@@ -9,7 +9,8 @@ def zkconnect(self):
     command_string = ''
     chksum = 0
     session_id = 0
-    reply_id = -1 + USHRT_MAX
+    # reply_id = -1 + USHRT_MAX
+    reply_id = 0
 
     buf = self.createHeader(command, chksum, session_id,
         reply_id, command_string)

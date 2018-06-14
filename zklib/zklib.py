@@ -47,6 +47,9 @@ class ZKLib:
         Copied from zkemsdk.c"""
         l = len(p)
         chksum = 0
+
+        # for i in range(0, len(p), 2):
+
         while l > 1:
             chksum += unpack('H', pack('BB', p[0], p[1]))[0]
             
@@ -74,6 +77,7 @@ class ZKLib:
                                 command_string):
         """This function puts a the parts that make up a packet together and 
         packs them into a byte string"""
+
         buf = pack('HHHH', command, chksum,
             session_id, reply_id) + command_string
         
@@ -81,9 +85,11 @@ class ZKLib:
         
         chksum = unpack('H', self.createChkSum(buf))[0]
         #print unpack('H', self.createChkSum(buf))
-        reply_id += 1
-        if reply_id >= USHRT_MAX:
-            reply_id -= USHRT_MAX
+
+        reply_id = (reply_id + 1) % USHRT_MAX
+        # reply_id += 1
+        # if reply_id >= USHRT_MAX:
+        #     reply_id -= USHRT_MAX
 
         buf = pack('HHHH', command, chksum, session_id, reply_id)
         return buf + command_string
