@@ -84,14 +84,11 @@ class ZKLib:
         buf = unpack('8B'+'%sB' % len(command_string), buf)
         
         chksum = unpack('H', self.createChkSum(buf))[0]
-        #print unpack('H', self.createChkSum(buf))
 
         reply_id = (reply_id + 1) % USHRT_MAX
-        # reply_id += 1
-        # if reply_id >= USHRT_MAX:
-        #     reply_id -= USHRT_MAX
 
         buf = pack('HHHH', command, chksum, session_id, reply_id)
+        
         return buf + command_string
     
     
@@ -100,8 +97,8 @@ class ZKLib:
         indicating success"""
         command = unpack('HHHH', reply[:8])[0]
 	
-        if command == CMD_ACK_OK:
-            print "CMD_ACK_OK"
+        if command == CMD_ACK_OK or command == CMD_UDP_OK:
+        #    print "CMD_ACK_OK"
             return True
         else:
             return False

@@ -4,8 +4,6 @@ import sys
 
 from zkconst import *
 
-
-
 def reverseHex(hexstr):
     tmp = ''
     for i in reversed( xrange( len(hexstr)/2 ) ):
@@ -16,7 +14,7 @@ def reverseHex(hexstr):
 
 def zkAtt(self):
 
-	print "testing"
+	#rint "testing"
 	file = open("binw", "w")
     
 	command = CMD_ATTLOG_RRQ
@@ -41,7 +39,7 @@ def zkAtt(self):
 	#print "unpack I 8:12 [0]", unpack ('I', self.data_recv[8:12])[0]
 
 	if unpack('4H',self.data_recv[:8])[0] == CMD_PREPARE_DATA:
-		print "received CMD_PREPARE_DATA"
+		#print "received CMD_PREPARE_DATA"
 
 		while unpack('4H', self.data_recv[:8])[0] != 2000:
 
@@ -111,7 +109,7 @@ def zkAtt(self):
 
 
             			uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )
-            			print "%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) )
+#            			#p#rint "%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) )
             			#print "%s, %s, %s, %s" % (uid, state, space, timestamp)
             			attendance.append( ( uid, ord(pls[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
             			attendancedata = attendancedata[40:]
