@@ -1,15 +1,15 @@
 from struct import pack, unpack
 from datetime import datetime, date
 
-from zkconst import *
+from .zkconst import *
 
 def reverseHex(hexstr):
     tmp = ''
-    for i in reversed( xrange( len(hexstr)/2 ) ):
-        tmp += hexstr[i*2:(i*2)+2]
-    
+    for i in reversed(range(int(len(hexstr) / 2)) ):
+        tmp += hexstr[ i * 2 : (i * 2) + 2]
+
     return tmp
-    
+
 def zksettime(self, t):
     """Start a connection with the time clock"""
     command = CMD_SET_TIME
@@ -28,7 +28,7 @@ def zksettime(self, t):
         return self.data_recv[8:]
     except:
         return False
-    
+
 
 def zkgettime(self):
     """Start a connection with the time clock"""
@@ -45,6 +45,6 @@ def zkgettime(self):
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
         self.session_id = unpack('HHHH', self.data_recv[:8])[2]
-        return decode_time( int( reverseHex( self.data_recv[8:].encode("hex") ), 16 ) )
+        return decode_time( int( reverseHex( self.data_recv[8:].hex() ), 16 ))
     except:
         return False

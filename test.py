@@ -1,11 +1,13 @@
-from zklib import zklib
+from zklib.zklib import ZKLib
 
 
 
-maquina = zklib.ZKLib(ip='10.0.8.11', port=4370)
+
+maquina = ZKLib(ip='10.0.8.11', port=4370)
 maquina.connect()
 
 
-print maquina.getAttendance()
+print(maquina.getUser())
+# print(maquina.getAttendance())
 
 maquina.disconnect()

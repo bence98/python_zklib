@@ -44,6 +44,8 @@ FCT_ATTLOG = '\x01' #1 & 0xFF
 LEVEL_USER = 0
 LEVEL_ADMIN = 14
 
+ENCODING='ascii'
+
 def encode_time(t):
     """Encode a timestamp send at the timeclock
 
@@ -55,8 +57,8 @@ def encode_time(t):
 
 
 def decode_time(t):
+    print(t)
     """Decode a timestamp retrieved from the timeclock
-
     copied from zkemsdk.c - DecodeTime"""
     second = t % 60
     t = t / 60
@@ -75,7 +77,7 @@ def decode_time(t):
 
     year = t + 2000
 
-    d = datetime(year, month, day, hour, minute, second)
+    d = datetime(int(year), int(month), int(day), int(hour), int(minute), int(second))
 
     return d
     

@@ -2,7 +2,7 @@ from struct import pack, unpack
 from datetime import datetime, date
 import sys
 
-from zkconst import *
+from .zkconst import *
 
 
 
@@ -132,24 +132,24 @@ def zkAtt(self):
 	attendance = []  
 	data_recv, addr = self.zkclient.recvfrom(3094)
 
-	#print "size", sys.getsizeof(data_recv)
-	#print "size", len(data_recv)
+	#print("size", sys.getsizeof(data_recv))
+	#print("size", len(data_recv))
 	lensi = len(data_recv) / 2
 	fstri = str(lensi) + "H"
-	#print "first unpack   ", unpack (fstri, data_recv)
+	#print("first unpack   ", unpack (fstri, data_recv))
 
 
 	if unpack('4H',data_recv[:8])[0] == CMD_PREPARE_DATA:
-		#print "received CMD_PREPARE_DATA"
+		#print("received CMD_PREPARE_DATA")
 		size = unpack('I', data_recv[8:12])[0]
 		
 		
 		
-		#print 'Receiving %s %s' % (size,"bytes")
+		#print('Receiving %s %s' % (size,"bytes"))
 		#data_recv, addr = self.zkclient.recvfrom(43773)
 		#lens = len(self.data_recv) / 2
 		#fstr = str(lens) + "H"	
-		#print "second unpack", unpack(fstr, self.data_recv)
+		#print("second unpack", unpack(fstr, self.data_recv))
 
 
 
@@ -159,7 +159,7 @@ def zkAtt(self):
 		while unpack('4H', data_recv[:8])[0] != CMD_ACK_OK or unpack('4H', data_recv[:8])[0] == CMD_DATA:
 
 
-			#print "COUNTER", i
+			#print("COUNTER", i)
 
 			data_recv, addr = self.zkclient.recvfrom(size)
 
@@ -167,11 +167,11 @@ def zkAtt(self):
 			fstr = str(lens) + "H"
 			if unpack(fstr, data_recv[:8])[0] == CMD_DATA:
 				i = i +1
-				#print "data package " , unpack(fstr, data_recv[:8])[0]
+				#print("data package " , unpack(fstr, data_recv[:8])[0])
 				lens = len(data_recv) / 2
 				fstr = str(lens) + "H"
 
-				#print "data unpack", unpack(fstr, data_recv)
+				#print("data unpack", unpack(fstr, data_recv))
 				if i == 1:
 
 
@@ -185,21 +185,21 @@ def zkAtt(self):
 			
 				#acmOK(self)
 		if unpack('4H', data_recv[:8])[0] == CMD_ACK_OK:
-			print "CMD_ACK_OK"
+			print("CMD_ACK_OK")
 				
 		
 			
 
-		print "length of att data", len(self.attendancedata)
-		print "length of atti data", len(self.attendancedata)
+		print("length of att data", len(self.attendancedata))
+		print("length of atti data", len(self.attendancedata))
 		#data_recv = self.zkclient.recvfrom(8)
 
 		for x in xrange(len(self.attendancedata)):
 
 
-						#print self.attendancedata[x][8:]
+						#print(self.attendancedata[x][8:])
 						#self.attendancedata[x] = self.attendancedata[x][8:]
-						#print self.attendancedata[x][0:]
+						#print(self.attendancedata[x][0:])
 			self.attendancedata[x] = self.attendancedata[x][0:]
 			
 
@@ -213,12 +213,12 @@ def zkAtt(self):
 
 		#test = getData(self)
 
-		print "len attendancedata", len(attendancedata)
+		print("len attendancedata", len(attendancedata))
 					
 		while len(attendancedata):
 
 
-			#print "att loop"
+			#print("att loop")
 
 
 
@@ -238,13 +238,13 @@ def zkAtt(self):
 			uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )
 			#ord(pls[0])
 
-			#print "%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) )
-			#print "%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) )
-						#print "%s, %s, %s, %s" % (uid, state, space, timestamp)
+			#print("%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ))
+			#print("%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ))
+						#print("%s, %s, %s, %s" % (uid, state, space, timestamp))
 			attendance.append( ( uid, ord(pls[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
 			#test.append( ( uid, 1 , decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
 			attendancedata = attendancedata[40:]
-			#print "len attendancedata", len(attendancedata)
+			#print("len attendancedata", len(attendancedata))
 						
 		return attendance
 
@@ -265,7 +265,7 @@ def zkclearattendance(self):
 	buf = self.createHeader(command, chksum, session_id,
 		reply_id, command_string)
 	self.zkclient.sendto(buf, self.address)
-	#print buf.encode("hex")
+	#print(buf.encode("hex"))
 	try:
 		self.data_recv, addr = self.zkclient.recvfrom(1024)
 		self.session_id = unpack('HHHH', self.data_recv[:8])[2]

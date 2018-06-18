@@ -1,14 +1,15 @@
 from struct import pack, unpack
 from datetime import datetime, date
 
-from zkconst import *
+from .zkconst import *
+from .exceptions import ZkException
 
 def getSizeUser(self):
     """Checks a returned packet to see if it returned CMD_PREPARE_DATA,
     indicating that data packets are to be sent
 
     Returns the amount of bytes that are going to be sent"""
-    command = unpack('HHHH', self.data_recv[:8])[0] 
+    command = unpack('HHHH', self.data_recv[:8])[0]
     if command == CMD_PREPARE_DATA:
         size = unpack('I', self.data_recv[8:12])[0]
         return size
@@ -34,8 +35,8 @@ def zksetuser(self, uid, userid, name, password, role):
         return self.data_recv[8:]
     except:
         return False
-    
-    
+
+
 def zkgetuser(self):
     """Start a connection with the time clock"""
     command = CMD_USERTEMP_RRQ
@@ -50,56 +51,57 @@ def zkgetuser(self):
     #print buf.encode("hex")
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
-        
-        
+
+
         if getSizeUser(self):
             bytes = getSizeUser(self)
-            
+
             while bytes > 0:
                 data_recv, addr = self.zkclient.recvfrom(1032)
                 self.userdata.append(data_recv)
                 bytes -= 1024
-            
+
             self.session_id = unpack('HHHH', self.data_recv[:8])[2]
             data_recv = self.zkclient.recvfrom(8)
-        
+
         users = {}
         if len(self.userdata) > 0:
             # The first 4 bytes don't seem to be related to the user
-            for x in xrange(len(self.userdata)):
+            for x in range(len(self.userdata)):
                 if x > 0:
                     self.userdata[x] = self.userdata[x][8:]
-            
-            userdata = ''.join( self.userdata )
-            
+
+            userdata = b''.join( self.userdata )
+
             userdata = userdata[11:]
-            
+
             while len(userdata) > 72:
-                
+
                 uid, role, password, name, userid = unpack( '2s2s8s28sx31s', userdata.ljust(72)[:72] )
-                
-                uid = int( uid.encode("hex"), 16)
+
+                uid = int( uid.hex(), 16)
                 # Clean up some messy characters from the user name
-                password = password.split('\x00', 1)[0]
-                password = unicode(password.strip('\x00|\x01\x10x'), errors='ignore')
-                
+                password = password.split(b'\x00', 1)[0]
+                password = str(password.strip(b'\x00|\x01\x10x'), errors='ignore')
+
                 #uid = uid.split('\x00', 1)[0]
-                userid = unicode(userid.strip('\x00|\x01\x10x'), errors='ignore')
-                
-                name = name.split('\x00', 1)[0]
-                
+                userid = str(userid.strip(b'\x00|\x01\x10x'), errors='ignore')
+
+                name = name.split(b'\x00', 1)[0]
+
                 if name.strip() == "":
                     name = uid
-                
-                users[uid] = (userid, name, int( role.encode("hex"), 16 ), password)
-                
+
+                users[uid] = (userid, name, int( role.hex(), 16 ), password)
+
                 #print("%d, %s, %s, %s, %s" % (uid, userid, name, int( role.encode("hex"), 16 ), password))
                 userdata = userdata[72:]
-                
+
         return users
-    except:
-        return False
-    
+    except Exception as ex:
+        raise ex
+        raise ZkException(ex)
+
 
 def zkclearuser(self):
     """Start a connection with the time clock"""

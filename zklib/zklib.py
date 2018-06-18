@@ -8,29 +8,29 @@ import time
 from struct import pack, unpack
 from datetime import datetime, date
 
-from zkconnect import *
-from zkversion import *
-from zkos import *
-from zkextendfmt import *
-from zkextendoplog import *
-from zkplatform import *
-from zkworkcode import *
-from zkssr import *
-from zkpin import *
-from zkface import *
-from zkserialnumber import *
-from zkdevice import *
-from zkuser import *
-from zkattendance import *
-from zktime import *
-from zkprepare import *
-from zkrefreshdata import *
-from zkfreedata import *
-from zkrestart import *
-from zkAtt import *
-from zkDBRrq import *
-from zkRegevent import *
-from zksoapAtt import *
+from .zkconnect import *
+from .zkversion import *
+from .zkos import *
+from .zkextendfmt import *
+from .zkextendoplog import *
+from .zkplatform import *
+from .zkworkcode import *
+from .zkssr import *
+from .zkpin import *
+from .zkface import *
+from .zkserialnumber import *
+from .zkdevice import *
+from .zkuser import *
+from .zkattendance import *
+from .zktime import *
+from .zkprepare import *
+from .zkrefreshdata import *
+from .zkfreedata import *
+from .zkrestart import *
+from .zkAtt import *
+from .zkDBRrq import *
+from .zkRegevent import *
+from .zksoapAtt import *
 
 class ZKLib:
     
@@ -81,7 +81,7 @@ class ZKLib:
         """This function puts a the parts that make up a packet together and 
         packs them into a byte string"""
         buf = pack('HHHH', command, chksum,
-            session_id, reply_id) + command_string
+            session_id, reply_id) + bytes(command_string, ENCODING)
         
         buf = unpack('8B'+'%sB' % len(command_string), buf)
         
@@ -92,7 +92,7 @@ class ZKLib:
             reply_id -= USHRT_MAX
 
         buf = pack('HHHH', command, chksum, session_id, reply_id)
-        return buf + command_string
+        return buf + bytes(command_string, ENCODING)
     
     
     def checkValid(self, reply):

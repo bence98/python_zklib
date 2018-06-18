@@ -1,9 +1,11 @@
 from struct import pack, unpack
 from datetime import datetime, date
 
-from zkconst import *
+from .zkconst import *
+from .exceptions import ZkException
 
 import pprint
+import codecs
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -13,7 +15,7 @@ def getSizeAttendance(self):
     indicating that data packets are to be sent
 
     Returns the amount of bytes that are going to be sent"""
-    command = unpack('HHHH', self.data_recv[:8])[0] 
+    command = unpack('HHHH', self.data_recv[:8])[0]
     #file = open("binw", "w")
     #file.write(command)
     if command == CMD_PREPARE_DATA:
@@ -28,11 +30,11 @@ def getSizeAttendance(self):
 
 def reverseHex(hexstr):
     tmp = ''
-    for i in reversed( xrange( len(hexstr)/2 ) ):
-        tmp += hexstr[i*2:(i*2)+2]
-    
+    for i in reversed(range(int( len(hexstr) / 2 ) )):
+        tmp += hexstr[ i * 2 :( i * 2 ) + 2]
+
     return tmp
-    
+
 def zkgetattendance(self):
     """Start a connection with the time clock"""
     command = CMD_ATTLOG_RRQ
@@ -47,31 +49,31 @@ def zkgetattendance(self):
     self.zkclient.sendto(buf, self.address)
 
     try:
-        self.data_recv, addr = self.zkclient.recvfrom(1024)
-        
+        self.data_recv, addr = self.zkclient.recvfrom(1024 * 100)
+
         if getSizeAttendance(self):
             bytes = getSizeAttendance(self)
             while bytes > 0:
-                data_recv, addr = self.zkclient.recvfrom(2048)
+                data_recv, addr = self.zkclient.recvfrom(1024 * 100)
                 self.attendancedata.append(data_recv)
                 bytes -= 2048#1024
-                
+
             self.session_id = unpack('HHHH', self.data_recv[:8])[2]
             data_recv = self.zkclient.recvfrom(8)
 
         attendance = []
         if len(self.attendancedata) > 0:
             # The first 4 bytes don't seem to be related to the user
-            for x in xrange(len(self.attendancedata)):
+            for x in range(len(self.attendancedata)):
                 if x > 0:
                     self.attendancedata[x] = self.attendancedata[x][8:]
-            
-            attendancedata = ''.join(self.attendancedata)
-            
+
+            attendancedata = b''.join(self.attendancedata)
+
             attendancedata = attendancedata[14:]
-            
+
             while len(attendancedata) > 40:
-                
+
                 uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )
                 #uid, state, timestamp, space = unpack(attendancedata.ljust(40)[:40] )
 
@@ -82,14 +84,14 @@ def zkgetattendance(self):
 
                 # Clean up some messy characters from the user name
                 #uid = unicode(uid.strip('\x00|\x01\x10x'), errors='ignore')
-                uid = uid.split('\x00', 1)[0]
-                attendance.append( ( uid, int( state.encode('hex'), 16), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
+                uid = str(uid.split(b'\x00', 1)[0], ENCODING)
+                attendance.append( ( uid, int( state.hex(), 16), decode_time( int( reverseHex( timestamp.hex() ), 16 ) ) ) )
                 attendancedata = attendancedata[40:]
         return attendance
-    except:
-        return False
-    
-    
+    except Exception as ex:
+        return ZkException(ex)
+
+
 def zkclearattendance(self):
     """Start a connection with the time clock"""
     command = CMD_CLEAR_ATTLOG

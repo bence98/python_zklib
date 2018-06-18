@@ -2,7 +2,7 @@ from struct import pack, unpack
 from datetime import datetime, date
 import sys
 
-from zkconst import *
+from .zkconst import *
 
 
 

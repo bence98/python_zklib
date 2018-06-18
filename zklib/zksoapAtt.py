@@ -1,7 +1,7 @@
 from struct import pack, unpack
 from datetime import datetime, date
 
-from zkconst import *
+from .zkconst import *
 import xml.etree.cElementTree as et
 import requests
 import datetime
