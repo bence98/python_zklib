@@ -57,7 +57,6 @@ def encode_time(t):
 
 
 def decode_time(t):
-    print(t)
     """Decode a timestamp retrieved from the timeclock
     copied from zkemsdk.c - DecodeTime"""
     second = t % 60
@@ -80,4 +79,4 @@ def decode_time(t):
     d = datetime(int(year), int(month), int(day), int(hour), int(minute), int(second))
 
     return d
-    
+
