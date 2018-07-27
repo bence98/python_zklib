@@ -49,14 +49,14 @@ def zkgetattendance(self):
     self.zkclient.sendto(buf, self.address)
 
     try:
-        self.data_recv, addr = self.zkclient.recvfrom(1024 * 100)
+        self.data_recv, addr = self.zkclient.recvfrom(1024)
 
         if getSizeAttendance(self):
             bytes = getSizeAttendance(self)
             while bytes > 0:
-                data_recv, addr = self.zkclient.recvfrom(1024 * 100)
+                data_recv, addr = self.zkclient.recvfrom(1032)
                 self.attendancedata.append(data_recv)
-                bytes -= 2048#1024
+                bytes -= 1024
 
             self.session_id = unpack('HHHH', self.data_recv[:8])[2]
             data_recv = self.zkclient.recvfrom(8)
