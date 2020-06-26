@@ -19,10 +19,10 @@ def getSizeAttendance(self):
     #file = open("binw", "w")
     #file.write(command)
     if command == CMD_PREPARE_DATA:
-        # print command
+        print(command)
         size = unpack('I', self.data_recv[8:12])[0]
-        # print "size:"
-        # pp.pprint(size)
+        print("size:")
+        pp.pprint(size)
         return size
     else:
         return False
@@ -30,9 +30,9 @@ def getSizeAttendance(self):
 
 def reverseHex(hexstr):
     tmp = ''
-    for i in reversed(range(int( len(hexstr) / 2 ) )):
-        tmp += hexstr[ i * 2 :( i * 2 ) + 2]
-
+    for i in reversed( range( len(hexstr)/2 ) ):
+        tmp += hexstr[i*2:(i*2)+2]
+    
     return tmp
 
 def zkgetattendance(self):
@@ -42,6 +42,8 @@ def zkgetattendance(self):
     chksum = 0
     session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
+    #file.write(self.data_recv[0:])
+    print("reply_id", reply_id)
 
     buf = self.createHeader(command, chksum, session_id,
         reply_id, command_string)

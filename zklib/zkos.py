@@ -19,6 +19,6 @@ def zkos(self):
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
         self.session_id = unpack('HHHH', self.data_recv[:8])[2]
-        return self.data_recv[8:]
+        return (self.data_recv[8:]).decode("ascii")
     except:
         return False

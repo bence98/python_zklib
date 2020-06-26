@@ -32,7 +32,7 @@ def acmOK(self):
 
 def reverseHex(hexstr):
 	tmp = ''
-	for i in reversed( xrange( len(hexstr)/2 ) ):
+	for i in reversed( range( len(hexstr)/2 ) ):
 		tmp += hexstr[i*2:(i*2)+2]
 	
 	return tmp
@@ -87,7 +87,7 @@ def recv_end(the_socket):
 
 def recv_size(the_socket):
     #data length is packed into 4 bytes
-    total_len=0;total_data=[];size=sys.maxint
+    total_len=0;total_data=[];size=sys.maxsize
     size_data=sock_data='';recv_size=8192
     while total_len<size:
         sock_data=the_socket.recv(recv_size)
@@ -122,7 +122,7 @@ def zkAtt(self):
 
 	buf = self.createHeader(command,chksum,session_id, reply_id, comand_string)
 
-	for x in xrange(10):
+	for x in range(10):
 
 		self.zkclient.sendto(buf,self.address)
 
@@ -194,7 +194,7 @@ def zkAtt(self):
 		print("length of atti data", len(self.attendancedata))
 		#data_recv = self.zkclient.recvfrom(8)
 
-		for x in xrange(len(self.attendancedata)):
+		for x in range(len(self.attendancedata)):
 
 
 						#print(self.attendancedata[x][8:])

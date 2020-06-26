@@ -8,7 +8,7 @@ from .zkconst import *
 
 def reverseHex(hexstr):
     tmp = ''
-    for i in reversed( xrange( len(hexstr)/2 ) ):
+    for i in reversed( range( len(hexstr)/2 ) ):
         tmp += hexstr[i*2:(i*2)+2]
     
     return tmp
@@ -16,7 +16,7 @@ def reverseHex(hexstr):
 
 def zkAtt(self):
 
-	print "testing"
+	print("testing")
 	file = open("binw", "w")
     
 	command = CMD_ATTLOG_RRQ
@@ -41,7 +41,7 @@ def zkAtt(self):
 	#print "unpack I 8:12 [0]", unpack ('I', self.data_recv[8:12])[0]
 
 	if unpack('4H',self.data_recv[:8])[0] == CMD_PREPARE_DATA:
-		print "received CMD_PREPARE_DATA"
+		print("received CMD_PREPARE_DATA")
 
 		while unpack('4H', self.data_recv[:8])[0] != 2000:
 
@@ -51,23 +51,23 @@ def zkAtt(self):
 			self.attendancedata.append(data_recv)
 			file.write(data_recv)
 			if unpack('4H', data_recv[:8])[0] == 1501:
-				print "receiving Data packet"
+				print("receiving Data packet")
 				#print "trying to unpack data", unpack('i', data_recv[:8])[1]
 
 			self.data_recv, addr = self.zkclient.recvfrom(1024)
 			#print "length of reiceived data packet", len(self.data_recv)
 			#print unpack('4H', self.data_recv)
 			if unpack('4H', self.data_recv)[0] == 2000:
-				print "received CMD_ACK_OK"
+				print("received CMD_ACK_OK")
 				try:
 
 					self.data_recv, addr = self.zkclient.recvfrom(1024)
 					#print len(self.data_recv)
 				except:
-					print "socket timeout - no more data to receive"
+					print("socket timeout - no more data to receive")
 					#print "length of att data", len(self.attendancedata)
 
-					for x in xrange(len(self.attendancedata)):
+					for x in range(len(self.attendancedata)):
 						#print self.attendancedata[x][8:]
 						#self.attendancedata[x] = self.attendancedata[x][8:]
 						#print self.attendancedata[x][0:]
@@ -111,7 +111,7 @@ def zkAtt(self):
 
 
             			uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )
-            			print "%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) )
+            			print("%s, %s, %s, %s" % (uid, ord(pls[0]), ord(space[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ))
             			#print "%s, %s, %s, %s" % (uid, state, space, timestamp)
             			attendance.append( ( uid, ord(pls[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
             			attendancedata = attendancedata[40:]

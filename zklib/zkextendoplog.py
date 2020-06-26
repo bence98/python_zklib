@@ -44,7 +44,7 @@ def zkextendoplog(self, index=0):
     if len(counter):
         counter = "0" + counter
         
-    print(self.data_seq1+" "+self.data_seq2+desc   )
+    print(self.data_seq1+" "+self.data_seq2+desc)
     data = header+self.data_seq1+self.data_seq2+self.id_com+counter+"00457874656e644f504c6f6700"
     self.zkclient.sendto(data.decode("hex"), self.address)
     print(data)

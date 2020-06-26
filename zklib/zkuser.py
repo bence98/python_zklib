@@ -81,14 +81,14 @@ def zkgetuser(self):
 
                 uid = int( uid.hex(), 16)
                 # Clean up some messy characters from the user name
-                password = password.split(b'\x00', 1)[0]
-                password = str(password.strip(b'\x00|\x01\x10x'), errors='ignore')
-
+                password = password.split('\x00', 1)[0]
+                password = str(password.strip('\x00|\x01\x10x'), errors='ignore')
+                
                 #uid = uid.split('\x00', 1)[0]
-                userid = str(userid.strip(b'\x00|\x01\x10x'), errors='ignore')
-
-                name = name.split(b'\x00', 1)[0]
-
+                userid = str(userid.strip('\x00|\x01\x10x'), errors='ignore')
+                
+                name = name.split('\x00', 1)[0]
+                
                 if name.strip() == "":
                     name = uid
 
