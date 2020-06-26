@@ -47,9 +47,7 @@ def zkgetattendance(self):
 
     buf = self.createHeader(command, chksum, session_id,
         reply_id, command_string)
-
     self.zkclient.sendto(buf, self.address)
-
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
 
@@ -73,7 +71,6 @@ def zkgetattendance(self):
             attendancedata = b''.join(self.attendancedata)
 
             attendancedata = attendancedata[14:]
-
             while len(attendancedata) > 40:
 
                 uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )

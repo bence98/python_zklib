@@ -2,6 +2,11 @@
 
 ZK fingerprint Attendance Machine Library for python with a connection to the network using the UDP protocol and port 4370
 
+[![](http://i.imgur.com/2tqfhMO.png?1)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DCSTC5GTWLBAN&lc=ID&item_name=donywahyuisp&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
+
+## NOW ##
+> This library is now beginning to be redeveloped and will come with complete documentation
+
 ## Getting started
 
 Login as admin to attendance machine and set the ip address for example (to 192.168.0.201) and connect the machine with ethernet to your network
@@ -32,3 +37,4 @@ Then you are connected.
 
 More examples on how to use the Library available in the
 zktest.py file
+

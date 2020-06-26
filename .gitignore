@@ -60,3 +60,5 @@ target/
 .idea/
 .idea/*
 
+# macOS file type
+.DS_Store

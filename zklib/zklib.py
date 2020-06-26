@@ -53,6 +53,9 @@ class ZKLib:
         Copied from zkemsdk.c"""
         l = len(p)
         chksum = 0
+
+        # for i in range(0, len(p), 2):
+
         while l > 1:
             chksum += unpack('H', pack('BB', p[0], p[1]))[0]
             
@@ -80,16 +83,15 @@ class ZKLib:
                                 command_string):
         """This function puts a the parts that make up a packet together and 
         packs them into a byte string"""
+
         buf = pack('HHHH', command, chksum,
             session_id, reply_id) + bytes(command_string, ENCODING)
         
         buf = unpack('8B'+'%sB' % len(command_string), buf)
         
         chksum = unpack('H', self.createChkSum(buf))[0]
-        #print unpack('H', self.createChkSum(buf))
-        reply_id += 1
-        if reply_id >= USHRT_MAX:
-            reply_id -= USHRT_MAX
+
+        reply_id = (reply_id + 1) % USHRT_MAX
 
         buf = pack('HHHH', command, chksum, session_id, reply_id)
         return buf + bytes(command_string, ENCODING)
@@ -99,7 +101,7 @@ class ZKLib:
         """Checks a returned packet to see if it returned CMD_ACK_OK,
         indicating success"""
         command = unpack('HHHH', reply[:8])[0]
-        if command == CMD_ACK_OK:
+        if command == CMD_ACK_OK or command == CMD_UDP_OK:
             print("CMD_ACK_OK")
             return True
         else:
@@ -146,12 +148,18 @@ class ZKLib:
     
     def deviceName(self):
         return zkdevicename(self)
-        
-    def disableDevice(self):
-        return zkdisabledevice(self)
-    
+
     def enableDevice(self):
         return zkenabledevice(self)
+
+    def disableDevice(self):
+        return zkdisabledevice(self)
+
+    def restartDevice(self):
+        return zkrestart(self)
+
+    def poweroffDevice(self):
+        return zkpoweroff(self)
         
     def getUser(self):
         return zkgetuser(self)
@@ -164,6 +172,9 @@ class ZKLib:
     
     def clearAdmin(self):
         return zkclearadmin(self)
+
+    def enrollUser(self, uid):
+        return zkenrolluser(self, uid)
         
     def getAttendance(self):
         return zkgetattendance(self)
@@ -179,7 +190,6 @@ class ZKLib:
 
     def prepareData(self):
         return zkprepare(self)
-
 
     def refreshData(self):
         return zkrefreshdata(self)
@@ -201,5 +211,4 @@ class ZKLib:
 
     def getsAtt(self, ip):
         return zksoapAtt(self)
-
 

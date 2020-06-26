@@ -250,10 +250,6 @@ def zkAtt(self):
 
 
 
-
-
-
-
 def zkclearattendance(self):
 	"""Start a connection with the time clock"""
 	command = CMD_CLEAR_ATTLOG

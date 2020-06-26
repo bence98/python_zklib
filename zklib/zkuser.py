@@ -81,13 +81,13 @@ def zkgetuser(self):
 
                 uid = int( uid.hex(), 16)
                 # Clean up some messy characters from the user name
-                password = password.split('\x00', 1)[0]
-                password = str(password.strip('\x00|\x01\x10x'), errors='ignore')
+                password = password.split(b'\x00', 1)[0]
+                password = str(password.strip(b'\x00|\x01\x10x'), errors='ignore')
                 
                 #uid = uid.split('\x00', 1)[0]
-                userid = str(userid.strip('\x00|\x01\x10x'), errors='ignore')
+                userid = str(userid.strip(b'\x00|\x01\x10x'), errors='ignore')
                 
-                name = name.split('\x00', 1)[0]
+                name = name.split(b'\x00', 1)[0]
                 
                 if name.strip() == "":
                     name = uid
@@ -140,4 +140,25 @@ def zkclearadmin(self):
         self.session_id = unpack('HHHH', self.data_recv[:8])[2]
         return self.data_recv[8:]
     except:
+        return False
+
+def zkenrolluser(self, uid):
+    '''Start Remote Fingerprint Enrollment'''
+
+    command = CMD_STARTENROLL
+    command_string = pack('2s', uid)
+    chksum = 0
+    session_id = self.session_id
+    reply_id = unpack('HHHH', self.data_recv[:8])[3]
+    
+    buf = self.createHeader(command, chksum, session_id, 
+        reply_id, command_string)
+    self.zkclient.sendto(buf, self.address)
+    
+    try:
+        self.data_recv, addr = self.zkclient.recvfrom(1024)
+        self.session_id = unpack('HHHH', self.data_recv[:8])[2]
+        return self.data_recv[8:]
+    except:
+        print ("failed", self.data_recv)
         return False

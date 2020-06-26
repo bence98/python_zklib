@@ -36,8 +36,8 @@ if ret:
                 level = 'Admin'
             else:
                 level = 'User'
-            print("[UID %d]: ID: %s, Name: %s, Level: %s, Password: %s" % (
-                uid, data_user[uid][0], data_user[uid][1], level, data_user[uid][3]))
+
+            print "[UID %d]: ID: %s, Name: %s, Level: %s, Password: %s" % ( uid, data_user[uid][0], data_user[uid][1], level, data_user[uid][3]  )
 
     # print "Clear Admin:", zk.clearAdmin()
     # zk.setUser(uid=61, userid='41', name='Dony Wahyu Isp', password='123456', role=zkconst.LEVEL_ADMIN)
@@ -59,8 +59,27 @@ if ret:
     #
     #     # print "Clear Attendance:", zk.clearAttendance()
 
-    print("Get Time:", zk.getTime())
-
-    print("Enable Device", zk.enableDevice())
-
-    print("Disconnect:", zk.disconnect())
+        #zk.setUser(uid=61, userid='41', name='Dony Wahyu Isp', password='123456', role=zkconst.LEVEL_ADMIN)
+    
+    attendance = zk.getAttendance()
+    print "Get Attendance:"
+    
+    if ( attendance ):
+        for lattendance in attendance:
+            print lattendance[1]
+            if lattendance[1] == 15:
+                state = 'Check In'
+            elif lattendance[1] == 0:
+                state = 'Check Out'
+            else:
+                state = 'Undefined'
+                
+            print "date %s, Jam %s: %s, Status: %s" % ( lattendance[2].date(), lattendance[2].time(), lattendance[0], state )
+        
+    # print "Clear Attendance:", zk.clearAttendance()
+    
+    zk.setUser(67, '67', 'Shubhamoy Chakrabarty', '', 0)
+    zk.enrollUser('67')
+    print "Get Time:", zk.getTime()
+    print "Enable Device", zk.enableDevice()
+    print "Disconnect:", zk.disconnect()

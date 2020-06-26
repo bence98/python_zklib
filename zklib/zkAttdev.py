@@ -4,8 +4,6 @@ import sys
 
 from .zkconst import *
 
-
-
 def reverseHex(hexstr):
     tmp = ''
     for i in reversed( range( len(hexstr)/2 ) ):
