@@ -15,10 +15,10 @@ def getSizeAttendance(self):
     #file = open("binw", "w")
     #file.write(command)
     if command == CMD_PREPARE_DATA:
-        #print command
+        print command
         size = unpack('I', self.data_recv[8:12])[0]
-        #print "size:"
-        #pp.pprint(size)
+        print "size:"
+        pp.pprint(size)
         return size
     else:
         return False
