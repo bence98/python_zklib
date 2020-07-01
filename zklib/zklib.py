@@ -31,10 +31,11 @@ from .zkAtt import *
 from .zkDBRrq import *
 from .zkRegevent import *
 from .zksoapAtt import *
+from .zkunlock import *
 
 class ZKLib:
     
-    def __init__(self, ip, port):
+    def __init__(self, ip, port=4370):
         self.address = (ip, port)
         self.ip = ip
         self.zkclient = socket(AF_INET, SOCK_DGRAM)
@@ -212,3 +213,5 @@ class ZKLib:
     def getsAtt(self, ip):
         return zksoapAtt(self)
 
+    def unlock(self, delay=64):
+        return zkunlock(self, delay)
