@@ -10,7 +10,7 @@ setup(
     author="AlSayed Gamal",
     author_email="mail.gamal@gmail.com",
     packages=["zklib"],
-    license="LICENSE.txt",
+    license="LICENSE",
     description="Zk Attendance Machine lib",
-    long_description=open("README.txt").read(),
+    long_description=open("README.md").read(),
 )
