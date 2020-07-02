@@ -15,7 +15,7 @@ def zkunlock(self, delay):
     self.zkclient.sendto(buf, self.address)
     
     self.data_recv, addr = self.zkclient.recvfrom(1024)
-    if unpack('4H', data_recv[:8])[0] == CMD_ACK_OK:
+    if unpack('4H', self.data_recv[:8])[0] == CMD_ACK_OK:
         return True
 
     return False

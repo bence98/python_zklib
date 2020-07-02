@@ -23,3 +23,4 @@ from . import zkAtt
 from . import zkDBRrq
 from . import zkRegevent
 from . import zksoapAtt
+from . import zkunlock
