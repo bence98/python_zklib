@@ -6,13 +6,9 @@ from .zkconst import *
 def zkdevicename(self):
     """Start a connection with the time clock"""
     command = CMD_DEVICE
-    command_string = '~DeviceName'
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'~DeviceName')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -25,13 +21,9 @@ def zkdevicename(self):
 def zkpoweroff(self):
     """Start a connection with the time clock"""
     command = CMD_POWEROFF
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -44,13 +36,9 @@ def zkpoweroff(self):
 def zkrestart(self):
     """Start a connection with the time clock"""
     command = CMD_RESTART
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -63,13 +51,9 @@ def zkrestart(self):
 def zkenabledevice(self):
     """Start a connection with the time clock"""
     command = CMD_ENABLEDEVICE
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -82,13 +66,9 @@ def zkenabledevice(self):
 def zkdisabledevice(self):
     """Start a connection with the time clock"""
     command = CMD_DISABLEDEVICE
-    command_string = '\x00\x00'
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'\x00\x00')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:

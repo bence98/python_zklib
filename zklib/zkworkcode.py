@@ -6,13 +6,9 @@ from .zkconst import *
 def zkworkcode(self):
     """Start a connection with the time clock"""
     command = CMD_DEVICE
-    command_string = 'WorkCode'
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'WorkCode')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:

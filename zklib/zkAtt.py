@@ -10,20 +10,16 @@ def acmOK(self):
 	"""send CMD_ACK_OK"""
 	""" try cmd_ack_data"""
 	command = CMD_ACK_DATA
-	command_string = ''
-	chksum = 0
 	session_id = 0
 	reply_id = -1 + USHRT_MAX
 
-	buf = self.createHeader(command, chksum, session_id,
-		reply_id, command_string)
-	
+	buf = self.createHeader(command, session_id, reply_id, b'')
+
 	self.zkclient.sendto(buf, self.address)
-	
+
 	try:
 		self.data_recv, addr = self.zkclient.recvfrom(1024)
 		self.session_id = unpack('HHHH', self.data_recv[:8])[2]
-		
 		return self.checkValid( self.data_recv )
 	except:
 		return False
@@ -34,7 +30,7 @@ def reverseHex(hexstr):
 	tmp = ''
 	for i in reversed( range( len(hexstr)/2 ) ):
 		tmp += hexstr[i*2:(i*2)+2]
-	
+
 	return tmp
 
 	#assume a socket disconnect (data returned is empty string) means  all data was #done being sent.
@@ -45,7 +41,7 @@ def recv_basic(the_socket):
         if not data: break
         total_data.append(data)
     return ''.join(total_data)
-    
+
 def recv_timeout(the_socket,timeout=2):
     the_socket.setblocking(0)
     total_data=[];data='';begin=time.time()
@@ -115,21 +111,18 @@ def zkAtt(self):
 	atti = []
 	i = 0
 	command = CMD_ATTLOG_RRQ
-	comand_string = ''
-	chksum = 0
-	session_id = self.session_id
 	reply_id = unpack('4H',self.data_recv[:8])[3]
 
-	buf = self.createHeader(command,chksum,session_id, reply_id, comand_string)
+	buf = self.createHeader(command, self.session_id, reply_id, b'')
 
 	for x in range(10):
 
 		self.zkclient.sendto(buf,self.address)
 
 
-   
+
 	size = None
-	attendance = []  
+	attendance = []
 	data_recv, addr = self.zkclient.recvfrom(3094)
 
 	#print("size", sys.getsizeof(data_recv))
@@ -142,19 +135,12 @@ def zkAtt(self):
 	if unpack('4H',data_recv[:8])[0] == CMD_PREPARE_DATA:
 		#print("received CMD_PREPARE_DATA")
 		size = unpack('I', data_recv[8:12])[0]
-		
-		
-		
+
 		#print('Receiving %s %s' % (size,"bytes"))
 		#data_recv, addr = self.zkclient.recvfrom(43773)
 		#lens = len(self.data_recv) / 2
-		#fstr = str(lens) + "H"	
+		#fstr = str(lens) + "H"
 		#print("second unpack", unpack(fstr, self.data_recv))
-
-
-
-		
-		
 
 		while unpack('4H', data_recv[:8])[0] != CMD_ACK_OK or unpack('4H', data_recv[:8])[0] == CMD_DATA:
 
@@ -180,15 +166,9 @@ def zkAtt(self):
 					#atti.append(data_recv)
 					self.attendancedata.append(data_recv)
 
-
-			
-			
 				#acmOK(self)
 		if unpack('4H', data_recv[:8])[0] == CMD_ACK_OK:
 			print("CMD_ACK_OK")
-				
-		
-			
 
 		print("length of att data", len(self.attendancedata))
 		print("length of atti data", len(self.attendancedata))
@@ -201,39 +181,27 @@ def zkAtt(self):
 						#self.attendancedata[x] = self.attendancedata[x][8:]
 						#print(self.attendancedata[x][0:])
 			self.attendancedata[x] = self.attendancedata[x][0:]
-			
-
 
 		#atti = atti
 
 		attendancedata = ''.join(self.attendancedata)
-			
 		attendancedata = attendancedata[14:]
-		#attendancedata = attendancedata[14:]
 
 		#test = getData(self)
 
 		print("len attendancedata", len(attendancedata))
-					
+
 		while len(attendancedata):
 
 
 			#print("att loop")
 
-
-
-
-						
-		
 			if len(attendancedata[29:30]) == 1:
 
 				pls = unpack('c',attendancedata[29:30])#[3]
-			
-						
+
 			#statev = unpack('=2c',attendancedata[21:23])
 			#datem = unpack('ii',attendancedata[:8])[1]
-						
-
 
 			uid, state, timestamp, space = unpack( '24s1s4s11s', attendancedata.ljust(40)[:40] )
 			#ord(pls[0])
@@ -245,7 +213,7 @@ def zkAtt(self):
 			#test.append( ( uid, 1 , decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
 			attendancedata = attendancedata[40:]
 			#print("len attendancedata", len(attendancedata))
-						
+
 		return attendance
 
 
@@ -253,13 +221,9 @@ def zkAtt(self):
 def zkclearattendance(self):
 	"""Start a connection with the time clock"""
 	command = CMD_CLEAR_ATTLOG
-	command_string = ''
-	chksum = 0
-	session_id = self.session_id
 	reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-	buf = self.createHeader(command, chksum, session_id,
-		reply_id, command_string)
+	buf = self.createHeader(command, self.session_id, reply_id, b'')
 	self.zkclient.sendto(buf, self.address)
 	#print(buf.encode("hex"))
 	try:

@@ -8,7 +8,7 @@ def reverseHex(hexstr):
     tmp = ''
     for i in reversed( range( len(hexstr)/2 ) ):
         tmp += hexstr[i*2:(i*2)+2]
-    
+
     return tmp
 
 
@@ -16,19 +16,16 @@ def zkAtt(self):
 
 	print("testing")
 	file = open("binw", "w")
-    
+
 	command = CMD_ATTLOG_RRQ
-	comand_string = ''
-	chksum = 0
-	session_id = self.session_id
 	reply_id = unpack('4H',self.data_recv[:8])[3]
 
-	buf = self.createHeader(command,chksum,session_id, reply_id, comand_string)
+	buf = self.createHeader(command, self.session_id, reply_id, b'')
 	self.zkclient.sendto(buf,self.address)
     #file.write(self.data_recv[0:])
     #print "reply_id", reply_id
 
-	attendance = []  
+	attendance = []
 	self.data_recv, addr = self.zkclient.recvfrom(1024)
 	#print "unpack HcHc :7", unpack('HcHc',self.data_recv[:7])
 	#print "unpack HHHH :8", unpack('HHHH',self.data_recv[:8])
@@ -77,9 +74,9 @@ def zkAtt(self):
 
 
 					attendancedata = ''.join( self.attendancedata)
-            
+
             		attendancedata = attendancedata[14:]
-            		
+
             		while len(attendancedata):
 
             			#print "length att", len(attendancedata)
@@ -113,7 +110,7 @@ def zkAtt(self):
             			#print "%s, %s, %s, %s" % (uid, state, space, timestamp)
             			attendance.append( ( uid, ord(pls[0]), decode_time( int( reverseHex( timestamp.encode('hex') ), 16 ) ) ) )
             			attendancedata = attendancedata[40:]
-            			
+
             	return attendance
 
 
@@ -125,13 +122,9 @@ def zkAtt(self):
 def zkclearattendance(self):
     """Start a connection with the time clock"""
     command = CMD_CLEAR_ATTLOG
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:

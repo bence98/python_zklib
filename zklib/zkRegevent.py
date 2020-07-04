@@ -16,11 +16,9 @@ def zkRegevent(self):
     """register for live events"""
     print("reg event")
     command = CMD_REG_EVENT
-    command_string = '\xff\xff\x00\x00'
-    chksum = 0
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, self.session_id, reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'\xff\xff\x00\x00')
     self.zkclient.sendto(buf, self.address)
     #print(buf.encode("hex"))
 
@@ -130,12 +128,9 @@ def zkRegevent(self):
 
                 """send CMD_ACK_OK"""
                 command = CMD_ACK_OK
-                command_string = ''
-                chksum = 0
                 reply_id = header[3]
 
-                buf = self.createHeader(command, chksum, self.session_id,
-                    reply_id, command_string)
+                buf = self.createHeader(command, self.session_id, reply_id, b'')
 
                 self.zkclient.sendto(buf, self.address)
         except socket.timeout:

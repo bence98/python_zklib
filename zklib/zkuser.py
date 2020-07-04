@@ -21,12 +21,9 @@ def zksetuser(self, uid, userid, name, password, role):
     """Start a connection with the time clock"""
     command = CMD_SET_USER
     command_string = pack('sxs8s28ss7sx8s16s', chr( uid ), chr(role), password, name, chr(1), '', userid, '' )
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, command_string)
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -40,13 +37,9 @@ def zksetuser(self, uid, userid, name, password, role):
 def zkgetuser(self):
     """Start a connection with the time clock"""
     command = CMD_USERTEMP_RRQ
-    command_string = '\x05'
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'\x05')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -83,12 +76,12 @@ def zkgetuser(self):
                 # Clean up some messy characters from the user name
                 password = password.split(b'\x00', 1)[0]
                 password = str(password.strip(b'\x00|\x01\x10x'), errors='ignore')
-                
+
                 #uid = uid.split('\x00', 1)[0]
                 userid = str(userid.strip(b'\x00|\x01\x10x'), errors='ignore')
-                
+
                 name = name.split(b'\x00', 1)[0]
-                
+
                 if name.strip() == "":
                     name = uid
 
@@ -106,13 +99,9 @@ def zkgetuser(self):
 def zkclearuser(self):
     """Start a connection with the time clock"""
     command = CMD_CLEAR_DATA
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -126,13 +115,9 @@ def zkclearuser(self):
 def zkclearadmin(self):
     """Start a connection with the time clock"""
     command = CMD_CLEAR_ADMIN
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -147,14 +132,11 @@ def zkenrolluser(self, uid):
 
     command = CMD_STARTENROLL
     command_string = pack('2s', uid)
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
-    
-    buf = self.createHeader(command, chksum, session_id, 
-        reply_id, command_string)
+
+    buf = self.createHeader(command, self.session_id, reply_id, command_string)
     self.zkclient.sendto(buf, self.address)
-    
+
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
         self.session_id = unpack('HHHH', self.data_recv[:8])[2]

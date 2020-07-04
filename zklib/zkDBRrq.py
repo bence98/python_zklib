@@ -16,13 +16,10 @@ def zkDBRrq(self):
     """Tell device to send us all attlog data"""
     attendance = []
     command = CMD_DB_RRQ
-    command_string = '\x01'
-    chksum = 0
-    session_id = self.session_id
 
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id, reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'\x01')
     self.zkclient.sendto(buf, self.address)
 
     self.data_recv, addr = self.zkclient.recvfrom(1024)
@@ -93,14 +90,14 @@ def zkDBRrq(self):
 		attendancedata = self.attendancedata
 
 		attendancedata = ''.join( self.attendancedata)
-            
+
 		attendancedata = attendancedata[14:]
 
 
 
 
 		print "len attendancedata", len(attendancedata)
-            		
+
         while len(attendancedata):
 
 

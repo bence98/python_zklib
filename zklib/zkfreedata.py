@@ -6,14 +6,11 @@ from .zkconst import *
 
 def zkfreedata(self):
 	"""Tell device to free data for transmisison"""
-	command = CMD_FREE_DATA	
-	command_string = ''
-	chksum = 0
-	session_id = self.session_id
+	command = CMD_FREE_DATA
 
 	reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-	buf = self.createHeader(command,chksum, session_id,reply_id, command_string)
+	buf = self.createHeader(command, self.session_id, reply_id, b'')
 	self.zkclient.sendto(buf,self.address)
 
 	try:
@@ -21,4 +18,4 @@ def zkfreedata(self):
 		self.session_id = unpack('HHHH', self.data_recv[:8])[2]
 		return self.data_recv[8:]
 	except:
-		return False 
+		return False

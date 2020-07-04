@@ -32,21 +32,17 @@ def reverseHex(hexstr):
     tmp = ''
     for i in reversed( range( len(hexstr)/2 ) ):
         tmp += hexstr[i*2:(i*2)+2]
-    
+
     return tmp
 
 def zkgetattendance(self):
     """Start a connection with the time clock"""
     command = CMD_ATTLOG_RRQ
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
     #file.write(self.data_recv[0:])
     print("reply_id", reply_id)
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     try:
         self.data_recv, addr = self.zkclient.recvfrom(1024)
@@ -94,13 +90,9 @@ def zkgetattendance(self):
 def zkclearattendance(self):
     """Start a connection with the time clock"""
     command = CMD_CLEAR_ATTLOG
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:

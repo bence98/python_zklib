@@ -8,19 +8,16 @@ def reverseHex(hexstr):
     tmp = ''
     for i in reversed( range( len(hexstr)//2 ) ):
         tmp += hexstr[i*2:(i*2)+2]
-    
+
     return tmp
 
 def zksettime(self, t):
     """Start a connection with the time clock"""
     command = CMD_SET_TIME
     command_string = pack('I',encode_time(t))
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, command_string)
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
@@ -34,13 +31,9 @@ def zksettime(self, t):
 def zkgettime(self):
     """Start a connection with the time clock"""
     command = CMD_GET_TIME
-    command_string = ''
-    chksum = 0
-    session_id = self.session_id
     reply_id = unpack('HHHH', self.data_recv[:8])[3]
 
-    buf = self.createHeader(command, chksum, session_id,
-        reply_id, command_string)
+    buf = self.createHeader(command, self.session_id, reply_id, b'')
     self.zkclient.sendto(buf, self.address)
     #print buf.encode("hex")
     try:
